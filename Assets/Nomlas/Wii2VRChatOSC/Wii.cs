@@ -58,17 +58,29 @@ namespace WiiVRC
                 Initialized = true;
             }
 
-            if (wiimote.Button.d_left != d_left) OnChange(wiimote.Button.d_left, ButtonType.LEFT); d_left = wiimote.Button.d_left;
-            if (wiimote.Button.d_right != d_right) OnChange(wiimote.Button.d_right, ButtonType.RIGHT); d_right = wiimote.Button.d_right;
-            if (wiimote.Button.d_up != d_up) OnChange(wiimote.Button.d_up, ButtonType.UP); d_up = wiimote.Button.d_up;
-            if (wiimote.Button.d_down != d_down) OnChange(wiimote.Button.d_down, ButtonType.DOWN); d_down = wiimote.Button.d_down;
-            if (wiimote.Button.a != a) OnChange(wiimote.Button.a, ButtonType.A); a = wiimote.Button.a;
-            if (wiimote.Button.b != b) OnChange(wiimote.Button.b, ButtonType.B); b = wiimote.Button.b;
-            if (wiimote.Button.one != one) OnChange(wiimote.Button.one, ButtonType.ONE); one = wiimote.Button.one;
-            if (wiimote.Button.two != two) OnChange(wiimote.Button.two, ButtonType.TWO); two = wiimote.Button.two;
-            if (wiimote.Button.plus != plus) OnChange(wiimote.Button.plus, ButtonType.PLUS); plus = wiimote.Button.plus;
-            if (wiimote.Button.minus != minus) OnChange(wiimote.Button.minus, ButtonType.MINUS); minus = wiimote.Button.minus;
-            if (wiimote.Button.home != home) OnChange(wiimote.Button.home, ButtonType.HOME); home = wiimote.Button.home;
+            CheckButton(ref d_left, wiimote.Button.d_left, ButtonType.LEFT);
+            CheckButton(ref d_right, wiimote.Button.d_right, ButtonType.RIGHT);
+            CheckButton(ref d_up, wiimote.Button.d_up, ButtonType.UP);
+            CheckButton(ref d_down, wiimote.Button.d_down, ButtonType.DOWN);
+            CheckButton(ref a, wiimote.Button.a, ButtonType.A);
+            CheckButton(ref b, wiimote.Button.b, ButtonType.B);
+            CheckButton(ref one, wiimote.Button.one, ButtonType.ONE);
+            CheckButton(ref two, wiimote.Button.two, ButtonType.TWO);
+            CheckButton(ref plus, wiimote.Button.plus, ButtonType.PLUS);
+            CheckButton(ref minus, wiimote.Button.minus, ButtonType.MINUS);
+            CheckButton(ref home, wiimote.Button.home, ButtonType.HOME);
+        }
+
+        private void CheckButton(ref bool prev, bool current, ButtonType type)
+        {
+            if (prev != current)
+            {
+                if (current)
+                    m_OnPressed(type);
+                else
+                    m_OnReleased(type);
+            }
+            prev = current;
         }
 
         public void Identify()
@@ -87,17 +99,6 @@ namespace WiiVRC
             wiimote.SendStatusInfoRequest();
         }
 
-        private void OnChange(bool pressed, ButtonType button)
-        {
-            if (pressed)
-            {
-                m_OnPressed(button);
-            }
-            else
-            {
-                m_OnReleased(button);
-            }
-        }
         private void m_OnPressed(ButtonType button) => listener?.OnPressed(button);
         private void m_OnReleased(ButtonType button) => listener?.OnReleased(button);
 
